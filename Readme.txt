@@ -4,7 +4,7 @@ Chris : christiannielsen517@gmail.com
 Dong : tdongwen@gmail.com
 Farooq: farouq.arafeh@ucalgary.ca
 Gurjit : gurjit.samra1@ucalgary.ca
-Soomro : 
+Soomro : mohammad.soomro@ucalgary.ca
 
 Meeting Dates:
 Wednesday Nov 01 @ 1300
