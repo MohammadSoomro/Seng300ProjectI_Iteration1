@@ -7,6 +7,7 @@ import com.jjjwelectronics.Mass;
 import com.jjjwelectronics.OverloadedDevice;
 import com.jjjwelectronics.scale.AbstractElectronicScale;
 import com.jjjwelectronics.scale.ElectronicScale;
+import com.jjjwelectronics.scale.ElectronicScaleListener;
 import com.jjjwelectronics.scanner.Barcode;
 import com.thelocalmarketplace.hardware.*;
 import com.thelocalmarketplace.hardware.external.ProductDatabases;
@@ -47,8 +48,13 @@ public class Main {
 			String response = myScanner.nextLine();
 			if (response == "1") {
 				skipBagging = true;
-				expectedWeightInBaggingArea = currentWeightInBaggingArea;
-			}
+				// unblock system
+				expectedWeightInBaggingArea = currentWeightInBaggingArea;}
+			// detect weight change on scale
+			//else if(weightDiscrepency = false) {
+			//  // unblock system
+			//	expectedWeightInBaggingArea = currentWeightInBaggingArea
+			//}
 		}
 		shoppingCart.add(product);
 		
