@@ -1,19 +1,20 @@
 package com.thelocalmarketplace.software;
 
+import java.util.ArrayList;
+
 import com.jjjwelectronics.IDevice;
 import com.jjjwelectronics.IDeviceListener;
-import com.jjjwelectronics.Item;
 import com.jjjwelectronics.Mass;
-import com.jjjwelectronics.OverloadedDevice;
-import com.jjjwelectronics.scale.AbstractElectronicScale;
-import com.jjjwelectronics.scale.ElectronicScale;
 import com.jjjwelectronics.scale.ElectronicScaleListener;
 import com.jjjwelectronics.scale.IElectronicScale;
+import com.thelocalmarketplace.hardware.BarcodedProduct;
 import com.thelocalmarketplace.hardware.SelfCheckoutStation;
 
 public class Main implements ElectronicScaleListener {
 	
 	private SelfCheckoutStation station = new SelfCheckoutStation();
+	
+	private ArrayList<BarcodedProduct> shoppingCart = new ArrayList<BarcodedProduct>();
 	private boolean inSession = false;
 	
 	@Override
@@ -36,15 +37,19 @@ public class Main implements ElectronicScaleListener {
 	 */
 	@Override
 	public void theMassOnTheScaleHasChanged(IElectronicScale scale, Mass mass) {
-		//if (!station.baggingArea.isDisabled()) {
 		if (!scale.isDisabled() & inSession) {
-			try {
-				//if (mass.difference(station.baggingArea.getCurrentMassOnTheScale()).abs().compareTo(station.baggingArea.getSensitivityLimit()) >= 0) {
-				if (mass.difference(((ElectronicScale)scale).getCurrentMassOnTheScale()).abs().compareTo(scale.getSensitivityLimit()) >= 0) {
-					station.scanner.disable();
-					station.coinSlot.disable();
-				}
-			} catch (OverloadedDevice e) {}
+			
+			double tempWeight = 0;
+			
+			for (BarcodedProduct items : shoppingCart) 
+				tempWeight += items.getExpectedWeight();
+			
+			Mass expectedMass = new Mass(tempWeight * Mass.MICROGRAMS_PER_GRAM);
+			
+			if (mass.difference(expectedMass).abs().compareTo(scale.getSensitivityLimit()) >= 0) {
+				station.scanner.disable();
+				station.coinSlot.disable();
+			}
 		}		
 	}
 }
