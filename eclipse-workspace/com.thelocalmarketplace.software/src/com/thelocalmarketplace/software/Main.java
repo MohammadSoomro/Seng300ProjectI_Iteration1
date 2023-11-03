@@ -25,6 +25,11 @@ public class Main implements ElectronicScaleListener {
 	@Override
 	public void theMassOnTheScaleNoLongerExceedsItsLimit(IElectronicScale scale) {}
 	
+	/**
+	 * This event is triggered when the mass on the scale changes.
+	 * If there is a discrepancy between the expected mass and the current
+	 * mass, the coin slot and Barcode scanner are disabled.
+	 */
 	@Override
 	public void theMassOnTheScaleHasChanged(IElectronicScale scale, Mass mass) {
 		if (!station.baggingArea.isDisabled()) {
