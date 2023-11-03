@@ -7,20 +7,28 @@
  */
 package com.thelocalmarketplace.software;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
+import com.tdc.CashOverloadException;
+import com.tdc.DisabledException;
+import com.tdc.coin.Coin;
 import com.thelocalmarketplace.hardware.BarcodedProduct;
 import com.thelocalmarketplace.hardware.SelfCheckoutStation;
 
 public class startSession {
 	
 	private boolean inSession = false;
-	private int Totalcost = 0;
+	private BigDecimal totalcost = 0;
 	private int totalWeight = 0;
 	private ArrayList<BarcodedProduct> shoppingCart = new ArrayList<>();
 	
 	public boolean getInSession() {
 		return inSession;
+	}
+	
+	public void endSession() {
+		setInSession(false);
 	}
 
 	public void setInSession(boolean inSession) {
@@ -40,32 +48,26 @@ public class startSession {
 		return sumOfItemPrices;
 	}
 	
-	public void startSession() {
+	public void startSession() throws Exception{
+		if(getInSession()) {
+			throw new Exception();
+		}
 		shoppingCart.clear();
 		this.totalWeight=0;
-		this .Totalcost=0;
-		this.inSession = true;
+		this.totalcost= new BigDecimal(0);
+		this.inSession = true;		
+	}
+	
+	public void payForOrder(Coin coin) throws ClassNotFoundException, DisabledException, CashOverloadException {
+		float totalPrice = totalPrice(shoppingCart);		
+		station.coinSlot.attach(Observer);
 		
-		
-		//Logic code for what happens when customer chooses to pay via coin
-		
-		float totalPrice = totalPrice(shoppingCart);
-		
-		//initialize listeners in a loop
-		
-		//should expect invalidCoinException, NullCoinException, others?
-		while (totalPrice > 0) {
-			
-			// listener.listens
-			//newMoney = listener.returned
-			//totalPrice -= newMoney
+		// Whatever chris got
+		while(this.totalCost.compareTo(coin.getValue()) > 0) {
+		station.coinSlot.receive(coin);
+		this.totalCost.subtract(coin.getValue());
 		}
+	}
 		
-	}
-	
-	public void endSession() {
-		setInSession(false);
-	}
-	
 	
 }
