@@ -1,32 +1,39 @@
 package com.thelocalmarketplace.software;
 
-import java.util.ArrayList;
-
+import com.jjjwelectronics.IDevice;
+import com.jjjwelectronics.IDeviceListener;
 import com.jjjwelectronics.Mass;
-import com.jjjwelectronics.scale.ElectronicScale;
-import com.thelocalmarketplace.hardware.BarcodedProduct;
+import com.jjjwelectronics.OverloadedDevice;
+import com.jjjwelectronics.scale.ElectronicScaleListener;
+import com.jjjwelectronics.scale.IElectronicScale;
+import com.thelocalmarketplace.hardware.SelfCheckoutStation;
 
-
-public class Main {
+public class Main implements ElectronicScaleListener {
 	
+	private SelfCheckoutStation station = new SelfCheckoutStation();
 	
-	private ArrayList<BarcodedProduct> shoppingCart = new ArrayList<>();
+	@Override
+	public void aDeviceHasBeenEnabled(IDevice<? extends IDeviceListener> device) {}
+	@Override
+	public void aDeviceHasBeenDisabled(IDevice<? extends IDeviceListener> device) {}
+	@Override
+	public void aDeviceHasBeenTurnedOn(IDevice<? extends IDeviceListener> device) {}
+	@Override
+	public void aDeviceHasBeenTurnedOff(IDevice<? extends IDeviceListener> device) {}
+	@Override
+	public void theMassOnTheScaleHasExceededItsLimit(IElectronicScale scale) {}
+	@Override
+	public void theMassOnTheScaleNoLongerExceedsItsLimit(IElectronicScale scale) {}
 	
-	/**
-	 * Obtains the expected mass in the bagging area.
-	 * 
-	 * @return The expected mass.
-	 */
-	public Mass getExpectedMass() {
-		Mass expectedMass = new Mass(0);
-		
-		for (BarcodedProduct items : shoppingCart) {
-			 expectedMass.sum(new Mass(items.getExpectedWeight() * Mass.MICROGRAMS_PER_GRAM));
-		}
-		
-		return expectedMass;
+	@Override
+	public void theMassOnTheScaleHasChanged(IElectronicScale scale, Mass mass) {
+		if (!station.baggingArea.isDisabled()) {
+			try {
+				if (mass.difference(station.baggingArea.getCurrentMassOnTheScale()).abs().compareTo(station.baggingArea.getSensitivityLimit()) >= 0) {
+					station.scanner.disable();
+					station.coinSlot.disable();
+				}
+			} catch (OverloadedDevice e) {}
+		}		
 	}
-	
-	
-
 }
