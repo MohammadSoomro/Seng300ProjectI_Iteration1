@@ -14,6 +14,7 @@ import com.jjjwelectronics.scale.ElectronicScaleListener;
 import com.jjjwelectronics.scale.IElectronicScale;
 import com.jjjwelectronics.scanner.Barcode;
 import com.jjjwelectronics.scanner.BarcodeScannerListener;
+import com.jjjwelectronics.scanner.BarcodedItem;
 import com.jjjwelectronics.scanner.IBarcodeScanner;
 import com.thelocalmarketplace.hardware.*;
 import com.thelocalmarketplace.hardware.external.ProductDatabases;
@@ -70,32 +71,26 @@ public class Main implements ElectronicScaleListener, BarcodeScannerListener{
 
 		// get BarcodedProduct mass from database
 		BarcodedProduct product = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode);
-		Mass productMass = new Mass(product.getExpectedWeight());
-		
+		double productMassInMicroGrams = product.getExpectedWeight() * Mass.MICROGRAMS_PER_GRAM;
+		Mass productMassInGrams = new Mass(product.getExpectedWeight());
+		// construct an Item using BarcodedProduct info
+		Item item = new BarcodedItem(product.getBarcode(), productMassInGrams);
 		// update expected weight in bagging area
-		Mass currentWeightInBaggingArea = null;
-		try {
-			currentWeightInBaggingArea = station.baggingArea.getCurrentMassOnTheScale();
-		} catch (OverloadedDevice e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Mass expectedWeightInBaggingArea = currentWeightInBaggingArea.sum(productMass);
 		
-		// add item to cart
+		// add item to cart and Items list in scale
 		shoppingCart.add(product);
-		
+		station.baggingArea.addAnItem(item);
+		boolean skipBagging;
 		/**
 		 *  blocks system from further adds until
 		 *  product is placed in bagging area or bagging is skipped (weight discrepancy is solved)
 		 */
-		while (tempMass != expectedWeightInBaggingArea) {
-			System.out.print("please place item in bagging area");
-			// notify attendant station
+		if(skipBagging = true) {
+			station.baggingArea.removeAnItem(item);
 			notifyAttendantStation();
 		}
-		tempMass = zeroMass;
 	}
+
 		
 
 	private static void notifyAttendantStation() {
