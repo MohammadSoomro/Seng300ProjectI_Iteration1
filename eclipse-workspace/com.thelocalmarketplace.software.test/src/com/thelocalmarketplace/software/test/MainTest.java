@@ -41,21 +41,30 @@ public class MainTest extends Main{
 	
 	@Before
 	public void setUp() {
+
+		station = new SelfCheckoutStation();
+		station.plugIn(PowerGrid.instance());
+		station.turnOn();
+
+		shoppingCart = new ArrayList<BarcodedProduct>();
+		
 		inSession = true;
 		station.baggingArea.enable();
 		station.scanner.enable();
 		station.coinSlot.enable();
 		
-		station = new SelfCheckoutStation();
-		station.plugIn(new PowerGrid());
-		shoppingCart = new ArrayList<BarcodedProduct>();
-		
 	}
 
 	@Test
-	public void gram72Test() {
+	public void sameMassTest() {
 		shoppingCart.add(productOne);
 		station.baggingArea.addAnItem(itemOne);
+		assertTrue(!station.scanner.isDisabled() & !station.coinSlot.isDisabled());
+	}
+	
+	public void differentMassTest() {
+		shoppingCart.add(productTwo);
+		station.baggingArea.addAnItem(itemTwo);
 		assertTrue(!station.scanner.isDisabled() & !station.coinSlot.isDisabled());
 	}
 
