@@ -12,10 +12,10 @@ import com.thelocalmarketplace.hardware.SelfCheckoutStation;
 
 public class Main implements ElectronicScaleListener {
 	
-	private SelfCheckoutStation station = new SelfCheckoutStation();
+	protected SelfCheckoutStation station = new SelfCheckoutStation();
 	
-	private ArrayList<BarcodedProduct> shoppingCart = new ArrayList<BarcodedProduct>();
-	private boolean inSession = false;
+	protected ArrayList<BarcodedProduct> shoppingCart = new ArrayList<BarcodedProduct>();
+	protected boolean inSession = false;
 	
 	@Override
 	public void aDeviceHasBeenEnabled(IDevice<? extends IDeviceListener> device) {}
