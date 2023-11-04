@@ -21,12 +21,13 @@ import com.thelocalmarketplace.software.*;
 
 public class startSessionTest extends startSession {
 	
-	private ArrayList<BarcodedProduct> shoppingCart = new ArrayList<>();
 	private static class startSessionStub extends startSession{
 		public void startSession() {
 			this.startSession();
 		}
 	}
+	private ArrayList<BarcodedProduct> shoppingCart = new ArrayList<>();
+	
 	
 	//should pass as startSession empties shopping cart
 	@Test
