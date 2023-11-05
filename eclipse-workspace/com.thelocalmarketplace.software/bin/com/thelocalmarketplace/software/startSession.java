@@ -61,7 +61,7 @@ public class startSession {
 
 	}
 	private boolean inSession = false;
-	private BigDecimal totalCost;
+	private long totalCost =0;
 	private int totalWeight = 0;
 	private ArrayList<BarcodedProduct> shoppingCart = new ArrayList<>();
 	public SelfCheckoutStation station = new SelfCheckoutStation();
@@ -102,14 +102,13 @@ public class startSession {
 		
 	}
 	
-	public void payForOrder(Coin coin) throws ClassNotFoundException, DisabledException, CashOverloadException {
-		float totalPrice = totalPrice(shoppingCart);		
-		station.coinSlot.attach(Observer);
+	public void payForOrder(Coin coin) throws ClassNotFoundException, DisabledException, CashOverloadException {		
+		long paidAmount =0;
 		
-		while(this.totalCost.compareTo(coin.getValue()) > 0) {
-		station.coinSlot.receive(coin);
-		this.totalCost.subtract(coin.getValue());
-		}
+		while (paidAmount != this.totalCost || paidAmount > this.totalCost)
+			station.coinSlot.receive(coin);
+			paidAmount = coin.getValue().longValue();
+		
 	}
 		
 	
