@@ -79,15 +79,13 @@ public class startSession {
 	}
 	
 	//Calculates total price of items in a user's shopping cart
-	public float totalPrice(ArrayList<BarcodedProduct> itemsFromCart) {
-		int i= 0;
-		float sumOfItemPrices = 0;
-		while (i <= shoppingCart.size()) {
-			float price = shoppingCart.get(i).getPrice();
-			sumOfItemPrices += price;
-			i++;
-		}
+	public long totalPrice(ArrayList<BarcodedProduct> shoppingCart) {
 		
+		long sumOfItemPrices = 0;
+		for(int i = 0; i < shoppingCart.size(); i++) {
+			sumOfItemPrices += shoppingCart.get(i).getPrice();
+		}
+		this.totalCost = sumOfItemPrices;
 		return sumOfItemPrices;
 	}
 	
