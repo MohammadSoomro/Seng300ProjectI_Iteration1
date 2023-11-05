@@ -21,11 +21,12 @@ import com.thelocalmarketplace.hardware.*;
 import com.thelocalmarketplace.hardware.external.ProductDatabases;
 
 
-public class Main extends BarcodeScanner implements BarcodeScannerListener{
+public class Main extends BarcodeScanner implements ElectronicScaleListener, BarcodeScannerListener{
 	
 	private static ArrayList<BarcodedProduct> shoppingCart = new ArrayList();
 	private static SelfCheckoutStation station = new SelfCheckoutStation();
-	private static boolean inSession;
+	public static boolean inSession;
+	boolean skipBagging = false;
 	
 	/**
 	 * This method represents when the customer scans an item.
@@ -36,7 +37,6 @@ public class Main extends BarcodeScanner implements BarcodeScannerListener{
 	@Override
 	public synchronized void scan(BarcodedItem item) {
 		super.scan(item);
-		boolean skipBagging;
 		if(skipBagging) {
 			station.baggingArea.removeAnItem(item);
 			notifyAttendantStation();
@@ -73,5 +73,11 @@ public class Main extends BarcodeScanner implements BarcodeScannerListener{
 	public void theMassOnTheScaleHasExceededItsLimit(IElectronicScale scale) {}
 	@Override
 	public void theMassOnTheScaleNoLongerExceedsItsLimit(IElectronicScale scale) {}
+
+	@Override
+	public void theMassOnTheScaleHasChanged(IElectronicScale scale, Mass mass) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
