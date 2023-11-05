@@ -42,6 +42,7 @@ public class MainTest extends Main{
 	public static void initialSetUp() {
 		barcodeOne = new Barcode(new Numeral[] {Numeral.one});
 		productOne = new BarcodedProduct(barcodeOne, "The first test product", 1, d1);
+		productOneMass = new Mass(productOne.getExpectedWeight());
 		itemOne = new BarcodedItem(barcodeOne, new Mass(d1));
 		
 		barcodeTwo = new Barcode(new Numeral[] {Numeral.two});
@@ -49,7 +50,6 @@ public class MainTest extends Main{
 		itemTwo = new BarcodedItem(barcodeTwo, new Mass(d3));
 		
 		station = new SelfCheckoutStation();
-		shoppingCart = new ArrayList<BarcodedProduct>();
 		
 		station.plugIn(PowerGrid.instance());
 		station.turnOn();
@@ -57,6 +57,7 @@ public class MainTest extends Main{
 		
 		station.baggingArea.enable();
 		station.scanner.enable();
+		station.scanner.register(main);
 		station.coinSlot.enable();
 		inSession = true;
 		shoppingCart = new ArrayList<BarcodedProduct>();
@@ -74,6 +75,20 @@ public class MainTest extends Main{
 		station.coinSlot.enable();
 		inSession = true;
 	}
+	
+	@Test
+	public void AddProductTest(){
+		station.scanner.scan(itemOne);
+		assertEquals(1,shoppingCart.size());
+	}
+
+	@Test 
+	public void notInSessionTest() {
+		main.inSession = false;
+		station.scanner.scan(itemOne);
+		assertEquals(0,shoppingCart.size());
+	}
+	
 	/**
 	 * Test behavior when the expected mass is the same as the actual mass on scale.
 	 * The scanner and coin slot should both remain enabled.
@@ -123,6 +138,11 @@ public class MainTest extends Main{
 		station.baggingArea.addAnItem(itemOne);
 		assertTrue(!station.scanner.isDisabled() & !station.coinSlot.isDisabled());
 		station.baggingArea.removeAnItem(itemOne);
+	}
+
+	@After
+	public void reset() {
+		shoppingCart.removeAll(shoppingCart);
 	}
 
 }
