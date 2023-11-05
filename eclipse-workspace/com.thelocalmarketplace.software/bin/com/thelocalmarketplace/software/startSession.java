@@ -96,7 +96,7 @@ public class startSession {
 		
 		shoppingCart.clear();
 		this.totalWeight = 0;
-		this.totalCost = new BigDecimal(0);
+		this.totalCost = 0;
 		this.inSession = true;
 	
 		
