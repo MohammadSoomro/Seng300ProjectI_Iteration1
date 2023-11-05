@@ -21,14 +21,71 @@ import com.jjjwelectronics.scale.ElectronicScaleListener;
 import com.jjjwelectronics.scale.IElectronicScale;
 import com.thelocalmarketplace.hardware.BarcodedProduct;
 import com.thelocalmarketplace.hardware.SelfCheckoutStation;
+import com.tdc.CashOverloadException;
+import com.tdc.DisabledException;
+import com.tdc.coin.Coin;
+
+
 
 public class Main implements ElectronicScaleListener {
 	
 	protected static SelfCheckoutStation station;
 	
 	protected static ArrayList<BarcodedProduct> shoppingCart;
-	protected static boolean inSession;
+	protected static boolean inSession = false;
+	private long totalCost;
 	boolean skipBagging = false;
+
+	/**
+	 * This method sets the flag to true to start a session
+	 * @param Takes no parameter
+	 */
+	@Override
+	public boolean getInSession() {
+		return inSession; 
+	}
+
+	/**
+	 * Returns weather a session is in progress.
+	 * 
+	 * @param inSession boolean: which will indidcate weather a session is in progress
+	 */
+	@Override
+	public void setInSession(boolean inSession) {	
+		this.inSession = inSession;
+	}
+
+	/**
+	 * This method is called to calculate the total pcost of all products in the shopping cart 
+	 * @param shoppingCart an arrayList of items in the shopping cart 
+	 */
+	@Override
+	public long totalPrice(ArrayList<BarcodedProduct> shoppingCart) {
+		long sumOfItemPrices = 0;
+		for(int i = 0; i < shoppingCart.size(); i++) {
+			sumOfItemPrices += shoppingCart.get(i).getPrice();
+		}
+		this.totalCost = sumOfItemPrices;
+		return sumOfItemPrices;
+	}
+
+	/**
+	 * This method starts the session
+	 * @param no parameter
+	 */
+	@Override
+	public void startSession() throws Exception {
+		if(getInSession()) {
+			throw new Exception();
+		}
+		
+		shoppingCart.clear();
+		this.totalWeight = 0;
+		this.totalCost = 0;
+		this.inSession = true;
+	} 
+
+
 	/**
 	 * This method represents when the customer scans an item.
 	 * The item is added to the items list.
@@ -59,6 +116,29 @@ public class Main implements ElectronicScaleListener {
 		}
 		BarcodedProduct product = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode);
 		shoppingCart.add(product);
+	}
+
+	/**
+	 * This method is called when station is ready to pay for order
+	 * @param coin: a coin object to pay for the order 
+	 */
+	@Override
+	public void payForOrder(Coin coin) throws ClassNotFoundException, DisabledException, CashOverloadException {		
+		long paidAmount =0;
+		while (paidAmount != this.totalCost || paidAmount > this.totalCost){
+			station.coinSlot.receive(coin);
+			paidAmount = coin.getValue().longValue();
+		}
+		endSession();
+	}
+
+	/**
+	 * This method is called when a session is completed
+	 * @param no parameter
+	 */
+	@Override
+	public void endSession() {
+		setInSession(false);
 	}
 	
 	private static void notifyAttendantStation() {}
