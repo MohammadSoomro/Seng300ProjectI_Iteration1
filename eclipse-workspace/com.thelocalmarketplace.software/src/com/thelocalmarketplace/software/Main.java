@@ -155,7 +155,29 @@ public class Main implements ElectronicScaleListener {
 	@Override
 	public void theMassOnTheScaleNoLongerExceedsItsLimit(IElectronicScale scale) {}
 	
-	
+	class coinSlotListener implements CoinSlotObserver {
+		@Override
+		public void enabled(IComponent<? extends IComponentObserver> component) {
+			// TODO Auto-generated method stub	
+		}
+		@Override
+		public void disabled(IComponent<? extends IComponentObserver> component) {
+			// TODO Auto-generated method stub	
+		}
+		@Override
+		public void turnedOn(IComponent<? extends IComponentObserver> component) {
+			// TODO Auto-generated method stub	
+		}
+		@Override
+		public void turnedOff(IComponent<? extends IComponentObserver> component) {
+			// TODO Auto-generated method stub	
+		}
+		@Override
+		public void coinInserted(CoinSlot slot) {
+			// TODO Auto-generated method stub	
+		}
+
+	}
 	/**
 	 * This event is triggered when the mass on the scale changes.
 	 * If there is a discrepancy between the expected mass and the current
