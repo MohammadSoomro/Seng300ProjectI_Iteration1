@@ -91,7 +91,7 @@ public class Main implements ElectronicScaleListener, BarcodeScannerListener{
 		}
 	}
 
-		
+	public static final Map<Barcode, BarcodedProduct> BARCODED_PRODUCT_DATABASE = new HashMap<instanceOfBarcodedProduct.getBarcode, instanceOfBarcodedProduct>();
 
 	private static void notifyAttendantStation() {
 		// TODO Auto-generated method stub
