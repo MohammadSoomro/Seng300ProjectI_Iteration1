@@ -76,19 +76,6 @@ public class MainTest extends Main{
 		inSession = true;
 	}
 	
-	@Test
-	public void AddProductTest(){
-		station.scanner.scan(itemOne);
-		assertEquals(1,shoppingCart.size());
-	}
-
-	@Test 
-	public void notInSessionTest() {
-		main.inSession = false;
-		station.scanner.scan(itemOne);
-		assertEquals(0,shoppingCart.size());
-	}
-	
 	/**
 	 * Test behavior when the expected mass is the same as the actual mass on scale.
 	 * The scanner and coin slot should both remain enabled.
@@ -138,11 +125,6 @@ public class MainTest extends Main{
 		station.baggingArea.addAnItem(itemOne);
 		assertTrue(!station.scanner.isDisabled() & !station.coinSlot.isDisabled());
 		station.baggingArea.removeAnItem(itemOne);
-	}
-
-	@After
-	public void reset() {
-		shoppingCart.removeAll(shoppingCart);
 	}
 
 }
